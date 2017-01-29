@@ -36,6 +36,30 @@
 			"revision": "7fcbc72f853b92b5720db4a6b8482be612daef24"
 		},
 		{
+			"checksumSHA1": "+U1IB5N4LDS74y4fXjARb4/S4IE=",
+			"path": "golang.org/x/image/font",
+			"revision": "83686c547965220f8b5d75e83ddc67d73420a89f",
+			"revisionTime": "2017-01-15T09:09:03Z"
+		},
+		{
+			"checksumSHA1": "KsSSl5U1ZkRocio4flF+3PlJUBM=",
+			"path": "golang.org/x/image/font/basicfont",
+			"revision": "83686c547965220f8b5d75e83ddc67d73420a89f",
+			"revisionTime": "2017-01-15T09:09:03Z"
+		},
+		{
+			"checksumSHA1": "mi+YA8hJi3z9bAf9EgOzvrdEZLk=",
+			"path": "golang.org/x/image/font/plan9font",
+			"revision": "83686c547965220f8b5d75e83ddc67d73420a89f",
+			"revisionTime": "2017-01-15T09:09:03Z"
+		},
+		{
+			"checksumSHA1": "euzvwlMLxyD0hwc+raoVsDLv6j4=",
+			"path": "golang.org/x/image/math/fixed",
+			"revision": "83686c547965220f8b5d75e83ddc67d73420a89f",
+			"revisionTime": "2017-01-15T09:09:03Z"
+		},
+		{
 			"checksumSHA1": "hKZGpbFuCrkE4s1vxubKK1aFlfI=",
 			"path": "golang.org/x/net/context",
 			"revision": "d9558e5c97f85372afee28cf2b6059d7d3818919"
