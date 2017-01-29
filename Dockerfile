@@ -4,9 +4,7 @@ MAINTAINER Edward Muller <edward@heroku.com>
 
 WORKDIR "/opt"
 
-ADD .docker_build/go-getting-started /opt/bin/go-getting-started
-ADD ./templates /opt/templates
+ADD .docker_build/kindle-live /opt/bin/kindle-live
 ADD ./static /opt/static
 
-CMD ["/opt/bin/go-getting-started"]
-
+CMD ["/opt/bin/kindle-live"]
