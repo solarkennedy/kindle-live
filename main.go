@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/freetype/truetype"
+	"github.com/oschwald/geoip2-golang"
+	"github.com/oschwald/maxminddb-golang"
 	"golang.org/x/image/font"
 	"golang.org/x/image/math/fixed"
 
@@ -16,11 +18,39 @@ import (
 	"image/png"
 	"io/ioutil"
 	"math"
+	"net"
 	"time"
 )
 
 type Circle struct {
 	X, Y, R float64
+}
+
+func lookupIP(input string) string {
+	db, err := maxminddb.Open("GeoIP2-City-Test.mmdb")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	ip := net.ParseIP("81.2.69.142")
+	var record_raw interface{}
+	var record struct {
+		City     geoip2.City `maxminddb:"city"`
+		Location struct {
+			Latitude  float64 `maxminddb:"latitude"`
+			Longitude float64 `maxminddb:"longitude"`
+		} `maxminddb:"location"`
+	}
+
+	err = db.Lookup(ip, &record)
+	db.Lookup(ip, &record_raw)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Raw: +%v\n", record_raw)
+	fmt.Printf("City name: %v\n", record.City)
+	fmt.Printf("Coordinates: %v, %v\n", record.Location.Latitude, record.Location.Longitude)
+	return fmt.Sprintf("+%v", record)
 }
 
 func addLabel(img *image.Gray, x, y int, size float64, label string) {
@@ -51,7 +81,6 @@ func addLabel(img *image.Gray, x, y int, size float64, label string) {
 }
 
 func addWeatherIcon(img *image.Gray, x, y int, size float64, label string) {
-	fmt.Println("Printing: ", label)
 	black := image.NewUniform(color.Black)
 	b, err := ioutil.ReadFile("./weathericons-regular-webfont.ttf")
 	if err != nil {
@@ -109,7 +138,8 @@ func render_image(ip string) image.Image {
 	}
 	label_string := fmt.Sprintf("Generated on: %s", time.Now().String())
 	addLabel(img, 50, 1420, 2, label_string)
-	addLabel(img, 50, 1400, 2, fmt.Sprintf("Client IP: %s", ip))
+	location := lookupIP(ip)
+	addLabel(img, 50, 1400, 2, fmt.Sprintf("Client IP: %s (%s)", ip, location))
 	addWeatherIcon(img, 50, 500, 26, "\uf00c")
 	return img
 }
