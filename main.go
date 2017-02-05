@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
-	//	"golang.org/x/image/math/fixed"
+	"golang.org/x/image/math/fixed"
 
 	"image"
 	"image/color"
@@ -24,8 +24,8 @@ type Circle struct {
 }
 
 func addLabel(img *image.Gray, x, y int, size float64, label string) {
-	col := color.Black
-	b, err := loadFontFile()
+	black := image.NewUniform(color.Black)
+	b, err := ioutil.ReadFile("./ubuntu.ttf")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,24 +35,47 @@ func addLabel(img *image.Gray, x, y int, size float64, label string) {
 	}
 	face := truetype.NewFace(f, &truetype.Options{
 		Size: size,
+		DPI:  600,
 	})
-	defer face.Close()
 	d := &font.Drawer{
 		Dst:  img,
-		Src:  image.NewUniform(col),
+		Src:  black,
 		Face: face,
 	}
-	//	d.Dot = fixed.Point26_6{
-	//		X: (fixed.I(img) - d.MeasureString(label)) / 2,
-	//		Y: fixed.I(y),
-	//	}
-
-	//d.DrawString(label)
-
+	d.Dot = fixed.Point26_6{
+		X: fixed.I(x),
+		Y: fixed.I(y),
+	}
+	d.DrawString(label)
+	defer face.Close()
 }
 
-func loadFontFile() ([]byte, error) {
-	return ioutil.ReadFile("./weathericons-regular-webfont.ttf")
+func addWeatherIcon(img *image.Gray, x, y int, size float64, label string) {
+	fmt.Println("Printing: ", label)
+	black := image.NewUniform(color.Black)
+	b, err := ioutil.ReadFile("./weathericons-regular-webfont.ttf")
+	if err != nil {
+		log.Fatal(err)
+	}
+	f, err := truetype.Parse(b)
+	if err != nil {
+		log.Fatal(err)
+	}
+	face := truetype.NewFace(f, &truetype.Options{
+		Size: size,
+		DPI:  600,
+	})
+	d := &font.Drawer{
+		Dst:  img,
+		Src:  black,
+		Face: face,
+	}
+	d.Dot = fixed.Point26_6{
+		X: fixed.I(x),
+		Y: fixed.I(y),
+	}
+	d.DrawString(label)
+	defer face.Close()
 }
 
 func (c *Circle) Brightness(x, y float64) uint8 {
@@ -85,8 +108,9 @@ func render_image(ip string) image.Image {
 		}
 	}
 	label_string := fmt.Sprintf("Generated on: %s", time.Now().String())
-	addLabel(img, 100, 100, 26, label_string)
-	addLabel(img, 100, 120, 26, fmt.Sprintf("Client IP: %s", ip))
+	addLabel(img, 50, 1420, 2, label_string)
+	addLabel(img, 50, 1400, 2, fmt.Sprintf("Client IP: %s", ip))
+	addWeatherIcon(img, 50, 500, 26, "\uf00c")
 	return img
 }
 
