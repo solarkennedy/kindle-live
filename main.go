@@ -7,12 +7,14 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
-	"golang.org/x/image/math/fixed"
+	//	"golang.org/x/image/math/fixed"
+
 	"image"
 	"image/color"
 	"image/png"
+	"io/ioutil"
 	"math"
 	"time"
 )
@@ -21,25 +23,45 @@ type Circle struct {
 	X, Y, R float64
 }
 
-func addLabel(img *image.Gray, x, y int, label string) {
-	col := color.White
-	point := fixed.Point26_6{fixed.Int26_6(x * 64), fixed.Int26_6(y * 64)}
+func addLabel(img *image.Gray, x, y int, size float64, label string) {
+	col := color.Black
+	b, err := loadFontFile()
+	if err != nil {
+		log.Fatal(err)
+	}
+	f, err := truetype.Parse(b)
+	if err != nil {
+		log.Fatal(err)
+	}
+	face := truetype.NewFace(f, &truetype.Options{
+		Size: size,
+	})
+	defer face.Close()
 	d := &font.Drawer{
 		Dst:  img,
 		Src:  image.NewUniform(col),
-		Face: basicfont.Face7x13,
-		Dot:  point,
+		Face: face,
 	}
-	d.DrawString(label)
+	//	d.Dot = fixed.Point26_6{
+	//		X: (fixed.I(img) - d.MeasureString(label)) / 2,
+	//		Y: fixed.I(y),
+	//	}
+
+	//d.DrawString(label)
+
+}
+
+func loadFontFile() ([]byte, error) {
+	return ioutil.ReadFile("./weathericons-regular-webfont.ttf")
 }
 
 func (c *Circle) Brightness(x, y float64) uint8 {
 	var dx, dy float64 = c.X - x, c.Y - y
 	d := math.Sqrt(dx*dx+dy*dy) / c.R
 	if d > 1 {
-		return 0
-	} else {
 		return 255
+	} else {
+		return 0
 	}
 }
 
@@ -58,24 +80,22 @@ func render_image(ip string) image.Image {
 				cr.Brightness(float64(x), float64(y)),
 				cr.Brightness(float64(x), float64(y)),
 				cr.Brightness(float64(x), float64(y)),
-				255}
+				0}
 			img.Set(x, y, c)
 		}
 	}
 	label_string := fmt.Sprintf("Generated on: %s", time.Now().String())
-	addLabel(img, 100, 100, label_string)
-	addLabel(img, 100, 120, fmt.Sprintf("Client IP: %s", ip))
+	addLabel(img, 100, 100, 26, label_string)
+	addLabel(img, 100, 120, 26, fmt.Sprintf("Client IP: %s", ip))
 	return img
 }
 
 func serve_image(c *gin.Context) {
 	buffer := new(bytes.Buffer)
-
 	img := render_image(c.ClientIP())
 	if err := png.Encode(buffer, img); err != nil {
 		log.Println("unable to encode image.")
 	}
-
 	c.Data(200, "image/png", buffer.Bytes())
 }
 
