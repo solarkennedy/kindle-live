@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 
@@ -10,6 +11,8 @@ import (
 	"github.com/golang/freetype/truetype"
 	"github.com/oschwald/geoip2-golang"
 	"github.com/oschwald/maxminddb-golang"
+	_ "github.com/schachmat/wego/backends"
+	"github.com/schachmat/wego/iface"
 	"golang.org/x/image/font"
 	"golang.org/x/image/math/fixed"
 
@@ -21,6 +24,8 @@ import (
 	"net"
 	"time"
 )
+
+var weather iface.Backend
 
 type Circle struct {
 	X, Y, R float64
@@ -47,10 +52,10 @@ func lookupIP(input string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Raw: +%v\n", record_raw)
-	fmt.Printf("City name: %v\n", record.City)
-	fmt.Printf("Coordinates: %v, %v\n", record.Location.Latitude, record.Location.Longitude)
-	return fmt.Sprintf("+%v", record)
+	//	fmt.Printf("Raw: +%v\n", record_raw)
+	//	fmt.Printf("City name: %v\n", record.City)
+	return fmt.Sprintf("Coordinates: %v, %v\n", record.Location.Latitude, record.Location.Longitude)
+	//	return fmt.Sprintf("+%v", record)
 }
 
 func addLabel(img *image.Gray, x, y int, size float64, label string) {
@@ -117,6 +122,31 @@ func (c *Circle) Brightness(x, y float64) uint8 {
 	}
 }
 
+func fetchForecast(location string) iface.Data {
+	location = "40.748,73.985"
+	numdays := 3
+	fmt.Println("Going to fetch the weather....")
+	r := weather.Fetch(location, numdays)
+	fmt.Println(r)
+	return r
+}
+
+func weatherBackendSetup() {
+	for _, be := range iface.AllBackends {
+		fmt.Println(be)
+		be.Setup()
+	}
+	flag.Set("forecast-api-key", "foo")
+	flag.Set("forecast-lang", "en")
+	flag.Set("forecast-debug", "true")
+	flag.Parse()
+	ok := false
+	weather, ok = iface.AllBackends["forecast.io"]
+	if !ok {
+		log.Fatalf("Could not find selected backend forecast.io")
+	}
+}
+
 func render_image(ip string) image.Image {
 	w := 1072
 	h := 1448
@@ -136,11 +166,16 @@ func render_image(ip string) image.Image {
 			img.Set(x, y, c)
 		}
 	}
+
 	label_string := fmt.Sprintf("Generated on: %s", time.Now().String())
 	addLabel(img, 50, 1420, 2, label_string)
+
 	location := lookupIP(ip)
+	forecast := fetchForecast(location)
+	fmt.Println(forecast)
 	addLabel(img, 50, 1400, 2, fmt.Sprintf("Client IP: %s (%s)", ip, location))
 	addWeatherIcon(img, 50, 500, 26, "\uf00c")
+
 	return img
 }
 
@@ -158,6 +193,8 @@ func main() {
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}
+
+	weatherBackendSetup()
 
 	router := gin.New()
 	router.Use(gin.Logger())
