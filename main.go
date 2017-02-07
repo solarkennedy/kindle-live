@@ -12,6 +12,7 @@ import (
 	"github.com/oschwald/geoip2-golang"
 	"github.com/oschwald/maxminddb-golang"
 	_ "github.com/schachmat/wego/backends"
+	_ "github.com/schachmat/wego/frontends"
 	"github.com/schachmat/wego/iface"
 	"golang.org/x/image/font"
 	"golang.org/x/image/math/fixed"
@@ -127,18 +128,21 @@ func fetchForecast(location string) iface.Data {
 	numdays := 3
 	fmt.Println("Going to fetch the weather....")
 	r := weather.Fetch(location, numdays)
-	fmt.Println(r)
+	//fmt.Println(r)
 	return r
 }
 
 func weatherBackendSetup() {
 	for _, be := range iface.AllBackends {
-		fmt.Println(be)
 		be.Setup()
+	}
+	for _, fe := range iface.AllFrontends {
+		fe.Setup()
 	}
 	flag.Set("forecast-api-key", "foo")
 	flag.Set("forecast-lang", "en")
-	flag.Set("forecast-debug", "true")
+	flag.Set("forecast-debug", "false")
+	flag.Set("frontend", "emoji")
 	flag.Parse()
 	ok := false
 	weather, ok = iface.AllBackends["forecast.io"]
@@ -147,22 +151,24 @@ func weatherBackendSetup() {
 	}
 }
 
+func renderForecast(img *image.Gray, r iface.Data) {
+	// TODO get better at rendering
+	// for _, d := range r.Forecast {
+	// 	for _, val := range c.PrintDay(d) {
+	// 		forecast_string := fmt.Printf(forecast_string, val)
+	// 	}
+	// }
+	fmt.Printf("+%v", r)
+}
+
 func render_image(ip string) image.Image {
 	w := 1072
 	h := 1448
 	img := image.NewGray(image.Rect(0, 0, w, h))
 
-	var hw, hh float64 = float64(w / 2), float64(h / 2)
-	r := 40.0
-	cr := &Circle{hw - r*math.Sin(0), hh - r*math.Cos(0), 60}
-
 	for x := 0; x < w; x++ {
 		for y := 0; y < h; y++ {
-			c := color.RGBA{
-				cr.Brightness(float64(x), float64(y)),
-				cr.Brightness(float64(x), float64(y)),
-				cr.Brightness(float64(x), float64(y)),
-				0}
+			c := color.RGBA{255, 255, 255, 255}
 			img.Set(x, y, c)
 		}
 	}
@@ -171,9 +177,10 @@ func render_image(ip string) image.Image {
 	addLabel(img, 50, 1420, 2, label_string)
 
 	location := lookupIP(ip)
-	forecast := fetchForecast(location)
-	fmt.Println(forecast)
 	addLabel(img, 50, 1400, 2, fmt.Sprintf("Client IP: %s (%s)", ip, location))
+
+	forecast := fetchForecast(location)
+	renderForecast(img, forecast)
 	addWeatherIcon(img, 50, 500, 26, "\uf00c")
 
 	return img
