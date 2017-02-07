@@ -151,14 +151,68 @@ func weatherBackendSetup() {
 	}
 }
 
+func codeToIcon(code iface.WeatherCode, day bool) string {
+	if day {
+		codes := map[iface.WeatherCode]string{
+			iface.CodeUnknown:             "\uf07b",
+			iface.CodeCloudy:              "\uf002",
+			iface.CodeFog:                 "\uf003",
+			iface.CodeHeavyRain:           "\uf008",
+			iface.CodeHeavyShowers:        "\uf009",
+			iface.CodeHeavySnow:           "\uf00a",
+			iface.CodeHeavySnowShowers:    "\uf06b",
+			iface.CodeLightRain:           "\uf006",
+			iface.CodeLightShowers:        "\uf006",
+			iface.CodeLightSleet:          "\uf0b2",
+			iface.CodeLightSleetShowers:   "\uf068",
+			iface.CodeLightSnow:           "\uf00a",
+			iface.CodeLightSnowShowers:    "\uf06b",
+			iface.CodePartlyCloudy:        "\uf07d",
+			iface.CodeSunny:               "\uf00d",
+			iface.CodeThunderyHeavyRain:   "\uf00e",
+			iface.CodeThunderyShowers:     "\uf010",
+			iface.CodeThunderySnowShowers: "\uf06b",
+			iface.CodeVeryCloudy:          "\uf013",
+		}
+		return codes[code]
+	} else {
+		codes := map[iface.WeatherCode]string{
+			iface.CodeUnknown:             "\uf07b",
+			iface.CodeCloudy:              "\uf086",
+			iface.CodeFog:                 "\uf04a",
+			iface.CodeHeavyRain:           "\uf028",
+			iface.CodeHeavyShowers:        "\uf028",
+			iface.CodeHeavySnow:           "\uf02a",
+			iface.CodeHeavySnowShowers:    "\uf06d",
+			iface.CodeLightRain:           "\uf026",
+			iface.CodeLightShowers:        "\uf029",
+			iface.CodeLightSleet:          "\uf0b4",
+			iface.CodeLightSleetShowers:   "\uf06a",
+			iface.CodeLightSnow:           "\uf02a",
+			iface.CodeLightSnowShowers:    "\uf06d",
+			iface.CodePartlyCloudy:        "\uf086",
+			iface.CodeSunny:               "\uf02e",
+			iface.CodeThunderyHeavyRain:   "\uf02d",
+			iface.CodeThunderyShowers:     "\uf02d",
+			iface.CodeThunderySnowShowers: "\uf06d",
+			iface.CodeVeryCloudy:          "\uf013",
+		}
+		return codes[code]
+	}
+}
+
 func renderForecast(img *image.Gray, r iface.Data) {
-	// TODO get better at rendering
-	// for _, d := range r.Forecast {
-	// 	for _, val := range c.PrintDay(d) {
-	// 		forecast_string := fmt.Printf(forecast_string, val)
-	// 	}
-	// }
-	fmt.Printf("+%v", r)
+	c := r.Current
+	addLabel(img, 50, 50, 6, "Current Weather")
+	addWeatherIcon(img, 50, 190, 10, codeToIcon(c.Code, true)) //TODO: night/day
+	addLabel(img, 160, 100, 2, c.Desc)
+	addLabel(img, 160, 120, 2, fmt.Sprintf("Temperature: %s °C (Feels like %s °C)", c.TempC, c.FeelsLikeC))
+	addLabel(img, 160, 140, 2, fmt.Sprintf("Humidity: %s", c.Humidity))
+	addLabel(img, 160, 160, 2, fmt.Sprintf("Chance of rain: %d%%", c.ChanceOfRainPercent))
+	addLabel(img, 160, 180, 2, fmt.Sprintf("Windspeed: %s km/h", c.WindspeedKmph))
+	addLabel(img, 160, 200, 2, fmt.Sprintf("Wind direction: %s", c.WinddirDegree))
+
+	fmt.Printf("+%v", r.Current)
 }
 
 func render_image(ip string) image.Image {
@@ -181,7 +235,6 @@ func render_image(ip string) image.Image {
 
 	forecast := fetchForecast(location)
 	renderForecast(img, forecast)
-	addWeatherIcon(img, 50, 500, 26, "\uf00c")
 
 	return img
 }
