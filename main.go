@@ -201,18 +201,60 @@ func codeToIcon(code iface.WeatherCode, day bool) string {
 	}
 }
 
+func hourToBool(h int) bool {
+	return h > 6 && h < 18
+}
+
+func drawForecast(img *image.Gray, y int, day iface.Day) {
+	addLabel(img, 50, y, 4, fmt.Sprintf("Forcast for %s", day.Date))
+	for i := 0; i < 24; i++ {
+		x := i*40 + 20
+		addLabel(img, x, y+10, 1, fmt.Sprintf("Hour %d", i))
+	}
+	for _, slot := range day.Slots {
+		slot_hour := slot.Time.Hour()
+		fmt.Println(slot_hour)
+		x := slot_hour*40 + 20
+		addLabel(img, x, y+20, 1, fmt.Sprintf("Slot %d", slot_hour))
+		addWeatherIcon(img, x, y+45, 3, codeToIcon(slot.Code, hourToBool(slot_hour)))
+
+		addWeatherIcon(img, x, y+50, 1, "\uf04e")
+		addLabel(img, x+10, y+60, 1, fmt.Sprintf("Rain: %d%%", slot.ChanceOfRainPercent))
+
+		addWeatherIcon(img, x, y+70, 1, "\uf055")
+		addLabel(img, x+10, y+70, 1, fmt.Sprintf("%v °C (%v °C)", slot.TempC, slot.FeelsLikeC))
+	}
+}
+
 func renderForecast(img *image.Gray, r iface.Data) {
 	c := r.Current
 	addLabel(img, 50, 50, 6, "Current Weather")
-	addWeatherIcon(img, 50, 190, 10, codeToIcon(c.Code, true)) //TODO: night/day
-	addLabel(img, 160, 100, 2, c.Desc)
-	addLabel(img, 160, 120, 2, fmt.Sprintf("Temperature: %s °C (Feels like %s °C)", c.TempC, c.FeelsLikeC))
-	addLabel(img, 160, 140, 2, fmt.Sprintf("Humidity: %s", c.Humidity))
-	addLabel(img, 160, 160, 2, fmt.Sprintf("Chance of rain: %d%%", c.ChanceOfRainPercent))
-	addLabel(img, 160, 180, 2, fmt.Sprintf("Windspeed: %s km/h", c.WindspeedKmph))
-	addLabel(img, 160, 200, 2, fmt.Sprintf("Wind direction: %s", c.WinddirDegree))
+
+	hour := c.Time.Hour()
+	addWeatherIcon(img, 50, 290, 24, codeToIcon(c.Code, hourToBool(hour)))
+	addLabel(img, 100, 320, 4, c.Desc)
+
+	addWeatherIcon(img, 368, 130, 4, "\uf055")
+	addLabel(img, 400, 130, 4, fmt.Sprintf("Temperature: %v °C (Feels like %v °C)", c.TempC, c.FeelsLikeC))
+
+	addWeatherIcon(img, 365, 170, 4, "\uf07a")
+	addLabel(img, 400, 170, 4, fmt.Sprintf("Humidity: %d", r.Current.Humidity))
+
+	addWeatherIcon(img, 370, 210, 4, "\uf04e")
+	addLabel(img, 400, 210, 4, fmt.Sprintf("Rain chance: %d%%", c.ChanceOfRainPercent))
+
+	addWeatherIcon(img, 360, 250, 4, "\uf0b7") // TODO Calculate scale
+	addLabel(img, 400, 250, 4, fmt.Sprintf("Windspeed: %s km/h", c.WindspeedKmph))
+
+	addWeatherIcon(img, 373, 290, 4, "\uf058") // TODO Choose direction
+	addLabel(img, 400, 290, 4, fmt.Sprintf("Wind direction: %s", c.WinddirDegree))
 
 	fmt.Printf("+%v", r.Current)
+
+	for i, d := range r.Forecast {
+		y := i*200 + 400
+		drawForecast(img, y, d)
+	}
 }
 
 func render_image(ip string) image.Image {
@@ -220,8 +262,8 @@ func render_image(ip string) image.Image {
 	h := 1448
 	img := image.NewGray(image.Rect(0, 0, w, h))
 
-	for x := 0; x < w; x++ {
-		for y := 0; y < h; y++ {
+	for x := 1; x < w-1; x++ {
+		for y := 1; y < h-1; y++ {
 			c := color.RGBA{255, 255, 255, 255}
 			img.Set(x, y, c)
 		}
