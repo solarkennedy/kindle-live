@@ -1,0 +1,139 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "RsNwOto8G8aXIiRrlFn4dtU9q/g=",
+			"path": "github.com/gin-gonic/gin",
+			"revision": "e2212d40c62a98b388a5eb48ecbdcf88534688ba",
+			"revisionTime": "2016-12-04T22:13:08Z"
+		},
+		{
+			"checksumSHA1": "UsILDoIB2S7ra+w2fMdb85mX3HM=",
+			"path": "github.com/gin-gonic/gin/binding",
+			"revision": "e2212d40c62a98b388a5eb48ecbdcf88534688ba",
+			"revisionTime": "2016-12-04T22:13:08Z"
+		},
+		{
+			"checksumSHA1": "PHv9FNb7YavJWtAHcY6ZgXmkmHs=",
+			"path": "github.com/gin-gonic/gin/render",
+			"revision": "e2212d40c62a98b388a5eb48ecbdcf88534688ba",
+			"revisionTime": "2016-12-04T22:13:08Z"
+		},
+		{
+			"checksumSHA1": "aJ/kX/eCUlrCJBZ26Hwh/RXzAIw=",
+			"path": "github.com/golang/freetype/raster",
+			"revision": "d9be45aaf7452cc30c0ceb1b1bf7efe1d17b7c87",
+			"revisionTime": "2016-12-08T06:47:10Z"
+		},
+		{
+			"checksumSHA1": "M5K0e+YbpnI/3x9iNF/VOgOFnes=",
+			"path": "github.com/golang/freetype/truetype",
+			"revision": "d9be45aaf7452cc30c0ceb1b1bf7efe1d17b7c87",
+			"revisionTime": "2016-12-08T06:47:10Z"
+		},
+		{
+			"checksumSHA1": "kBeNcaKk56FguvPSUCEaH6AxpRc=",
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "8ee79997227bf9b34611aee7946ae64735e6fd93",
+			"revisionTime": "2016-11-17T03:31:26Z"
+		},
+		{
+			"checksumSHA1": "b0T0Hzd+zYk+OCDTFMps+jwa/nY=",
+			"path": "github.com/manucorporat/sse",
+			"revision": "ee05b128a739a0fb76c7ebd3ae4810c1de808d6d",
+			"revisionTime": "2016-01-26T18:01:36Z"
+		},
+		{
+			"checksumSHA1": "I4njd26dG5hxFT2nawuByM4pxzY=",
+			"path": "github.com/mattn/go-colorable",
+			"revision": "d228849504861217f796da67fae4f6e347643f15",
+			"revisionTime": "2016-11-03T16:00:40Z"
+		},
+		{
+			"checksumSHA1": "xZuhljnmBysJPta/lMyYmJdujCg=",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "30a891c33c7cde7b02a981314b4228ec99380cca",
+			"revisionTime": "2016-11-23T14:36:37Z"
+		},
+		{
+			"checksumSHA1": "MNkKJyk2TazKMJYbal5wFHybpyA=",
+			"path": "github.com/mattn/go-runewidth",
+			"revision": "14207d285c6c197daabb5c9793d63e7af9ab2d50",
+			"revisionTime": "2017-02-01T02:35:40Z"
+		},
+		{
+			"checksumSHA1": "YJtFucj5khgU1j3UYDxzls7jRA0=",
+			"path": "github.com/oschwald/geoip2-golang",
+			"revision": "be604c4d64628a31fd5cdd1a20752632252807bc",
+			"revisionTime": "2017-02-01T23:27:18Z"
+		},
+		{
+			"checksumSHA1": "rnQM9A55VCOSbv0IOuUn/Yl+IFk=",
+			"path": "github.com/oschwald/maxminddb-golang",
+			"revision": "4cf6490e82edd288b91d6a786d85dab042015e24",
+			"revisionTime": "2016-12-31T00:38:52Z"
+		},
+		{
+			"checksumSHA1": "Yrz6B9H9dktut8E8124RkPCIaTQ=",
+			"path": "github.com/schachmat/wego/backends",
+			"revision": "a8a0870330403c87dff0a772023fce53df65d050",
+			"revisionTime": "2016-06-30T15:49:48Z"
+		},
+		{
+			"checksumSHA1": "mdqJKDun+J6viBADC7/3jXVU5fI=",
+			"path": "github.com/schachmat/wego/frontends",
+			"revision": "a8a0870330403c87dff0a772023fce53df65d050",
+			"revisionTime": "2016-06-30T15:49:48Z"
+		},
+		{
+			"checksumSHA1": "EYILJkSnSztv6/wUyvoG7DAfuGY=",
+			"path": "github.com/schachmat/wego/iface",
+			"revision": "a8a0870330403c87dff0a772023fce53df65d050",
+			"revisionTime": "2016-06-30T15:49:48Z"
+		},
+		{
+			"checksumSHA1": "+U1IB5N4LDS74y4fXjARb4/S4IE=",
+			"path": "golang.org/x/image/font",
+			"revision": "69afd001f792d732a78bd7225793315a8deb09ea",
+			"revisionTime": "2017-01-21T05:32:42Z"
+		},
+		{
+			"checksumSHA1": "euzvwlMLxyD0hwc+raoVsDLv6j4=",
+			"path": "golang.org/x/image/math/fixed",
+			"revision": "69afd001f792d732a78bd7225793315a8deb09ea",
+			"revisionTime": "2017-01-21T05:32:42Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "golang.org/x/net/context",
+			"revision": "55a3084c9119aeb9ba2437d595b0a7e9cb635da9",
+			"revisionTime": "2016-11-04T22:18:50Z"
+		},
+		{
+			"checksumSHA1": "uTQtOqR0ePMMcvuvAIksiIZxhqU=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "7a6e5648d140666db5d920909e082ca00a87ba2c",
+			"revisionTime": "2017-02-01T04:15:14Z"
+		},
+		{
+			"checksumSHA1": "kQB2wRB3twjUp615F6zEwGHjNe0=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "7a6e5648d140666db5d920909e082ca00a87ba2c",
+			"revisionTime": "2017-02-01T04:15:14Z"
+		},
+		{
+			"checksumSHA1": "39V1idWER42Lmcmg2Uy40wMzOlo=",
+			"path": "gopkg.in/go-playground/validator.v8",
+			"revision": "5f57d2222ad794d0dffb07e664ea05e2ee07d60c",
+			"revisionTime": "2016-07-18T13:41:25Z"
+		},
+		{
+			"checksumSHA1": "+OgOXBoiQ+X+C2dsAeiOHwBIEH0=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "a83829b6f1293c91addabc89d0571c246397bbf4",
+			"revisionTime": "2016-03-01T20:40:22Z"
+		}
+	],
+	"rootPath": "github.com/solarkennedy/kindle-live"
+}
