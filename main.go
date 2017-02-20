@@ -183,6 +183,36 @@ func drawForecast(img *image.Gray, y int, day iface.Day) {
 	}
 }
 
+func speedToBeaufort(kmph float32) (string, string) {
+	if kmph < 1 {
+		return "\uf0b7", "Calm"
+	} else if kmph < 5 {
+		return "\uf0b8", "Light air"
+	} else if kmph < 11 {
+		return "\uf0b9", "Light breeze"
+	} else if kmph < 19 {
+		return "\uf0ba", "Gentle breeze"
+	} else if kmph < 28 {
+		return "\uf0bb", "Modarate breeze" //4
+	} else if kmph < 38 {
+		return "\uf0bc", "Fresh breeze"
+	} else if kmph < 49 {
+		return "\uf0bd", "Strong breeze"
+	} else if kmph < 61 {
+		return "\uf0be", "High winds" //7
+	} else if kmph < 74 {
+		return "\uf0bf", "Fresh gale"
+	} else if kmph < 88 {
+		return "\uf0c0", "Strong gale"
+	} else if kmph < 102 {
+		return "\uf0c1", "Storm" //10
+	} else if kmph < 117 {
+		return "\uf0c2", "Violent storm"
+	} else {
+		return "\uf0c3", "Hurricane force"
+	}
+}
+
 func renderForecast(img *image.Gray, r iface.Data) {
 	c := r.Current
 	addLabel(img, 50, 50, 6, "Current Weather")
@@ -204,8 +234,9 @@ func renderForecast(img *image.Gray, r iface.Data) {
 	}
 	addLabel(img, 400, 210, 4, fmt.Sprintf("Rain chance: %d%%", chance))
 
-	addWeatherIcon(img, 360, 250, 4, "\uf0b7") // TODO Calculate scale
-	addLabel(img, 400, 250, 4, fmt.Sprintf("Windspeed: %.1f km/h", *c.WindspeedKmph))
+	wind_icon, wind_desc := speedToBeaufort(*c.WindspeedKmph)
+	addWeatherIcon(img, 360, 250, 4, wind_icon)
+	addLabel(img, 400, 250, 4, fmt.Sprintf("Windspeed: %.1f km/h (%s)", *c.WindspeedKmph, wind_desc))
 
 	addWeatherIcon(img, 373, 290, 4, "\uf058") // TODO Choose direction
 	addLabel(img, 400, 290, 4, fmt.Sprintf("Wind direction: %d°", *c.WinddirDegree))
