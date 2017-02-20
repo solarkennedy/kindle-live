@@ -19,15 +19,10 @@ import (
 	"image/color"
 	"image/png"
 	"io/ioutil"
-	"math"
 	"time"
 )
 
 var weather iface.Backend
-
-type Circle struct {
-	X, Y, R float64
-}
 
 func addLabel(img *image.Gray, x, y int, size float64, label string) {
 	black := image.NewUniform(color.Black)
@@ -81,16 +76,6 @@ func addWeatherIcon(img *image.Gray, x, y int, size float64, label string) {
 	}
 	d.DrawString(label)
 	defer face.Close()
-}
-
-func (c *Circle) Brightness(x, y float64) uint8 {
-	var dx, dy float64 = c.X - x, c.Y - y
-	d := math.Sqrt(dx*dx+dy*dy) / c.R
-	if d > 1 {
-		return 255
-	} else {
-		return 0
-	}
 }
 
 func fetchForecast(location string) iface.Data {
