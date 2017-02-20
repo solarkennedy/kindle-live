@@ -213,6 +213,28 @@ func speedToBeaufort(kmph float32) (string, string) {
 	}
 }
 
+func directionToIcon(direction int) (string, string) {
+	if direction < 22 {
+		return "\uf05c", "Southerly"
+	} else if direction < 67 {
+		return "\uf05a", "Southwesterly"
+	} else if direction < 112 {
+		return "\uf059", "Westerly"
+	} else if direction < 157 {
+		return "\uf05d", "Northwesterly"
+	} else if direction < 202 {
+		return "\uf060", "Northernly"
+	} else if direction < 247 {
+		return "\uf053", "Northeasterly"
+	} else if direction < 292 {
+		return "\uf061", "Easterly"
+	} else if direction < 337 {
+		return "\uf05b", "Southeasterly"
+	} else {
+		return "\uf05c", "Southerly"
+	}
+}
+
 func renderForecast(img *image.Gray, r iface.Data) {
 	c := r.Current
 	addLabel(img, 50, 50, 6, "Current Weather")
@@ -238,8 +260,9 @@ func renderForecast(img *image.Gray, r iface.Data) {
 	addWeatherIcon(img, 360, 250, 4, wind_icon)
 	addLabel(img, 400, 250, 4, fmt.Sprintf("Windspeed: %.1f km/h (%s)", *c.WindspeedKmph, wind_desc))
 
-	addWeatherIcon(img, 373, 290, 4, "\uf058") // TODO Choose direction
-	addLabel(img, 400, 290, 4, fmt.Sprintf("Wind direction: %d°", *c.WinddirDegree))
+	windd_icon, windd_desc := directionToIcon(*c.WinddirDegree)
+	addWeatherIcon(img, 371, 290, 4, windd_icon)
+	addLabel(img, 400, 290, 4, fmt.Sprintf("Wind direction: %d° (%s)", *c.WinddirDegree, windd_desc))
 
 	for i, d := range r.Forecast {
 		y := i*200 + 400
