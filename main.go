@@ -9,8 +9,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/freetype/truetype"
-	"github.com/oschwald/geoip2-golang"
-	"github.com/oschwald/maxminddb-golang"
 	_ "github.com/schachmat/wego/backends"
 	_ "github.com/schachmat/wego/frontends"
 	"github.com/schachmat/wego/iface"
@@ -22,7 +20,6 @@ import (
 	"image/png"
 	"io/ioutil"
 	"math"
-	"net"
 	"time"
 )
 
@@ -30,33 +27,6 @@ var weather iface.Backend
 
 type Circle struct {
 	X, Y, R float64
-}
-
-func lookupIP(input string) string {
-	db, err := maxminddb.Open("GeoIP2-City-Test.mmdb")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-	ip := net.ParseIP("81.2.69.142")
-	var record_raw interface{}
-	var record struct {
-		City     geoip2.City `maxminddb:"city"`
-		Location struct {
-			Latitude  float64 `maxminddb:"latitude"`
-			Longitude float64 `maxminddb:"longitude"`
-		} `maxminddb:"location"`
-	}
-
-	err = db.Lookup(ip, &record)
-	db.Lookup(ip, &record_raw)
-	if err != nil {
-		log.Fatal(err)
-	}
-	//	fmt.Printf("Raw: +%v\n", record_raw)
-	//	fmt.Printf("City name: %v\n", record.City)
-	return fmt.Sprintf("Coordinates: %v, %v\n", record.Location.Latitude, record.Location.Longitude)
-	//	return fmt.Sprintf("+%v", record)
 }
 
 func addLabel(img *image.Gray, x, y int, size float64, label string) {
@@ -124,7 +94,6 @@ func (c *Circle) Brightness(x, y float64) uint8 {
 }
 
 func fetchForecast(location string) iface.Data {
-	location = "40.748,73.985"
 	numdays := 3
 	fmt.Println("Going to fetch the weather....")
 	r := weather.Fetch(location, numdays)
@@ -262,7 +231,7 @@ func renderForecast(img *image.Gray, r iface.Data) {
 	}
 }
 
-func render_image(ip string) image.Image {
+func render_image(location string, ip string) image.Image {
 	w := 1072
 	h := 1448
 	img := image.NewGray(image.Rect(0, 0, w, h))
@@ -277,7 +246,6 @@ func render_image(ip string) image.Image {
 	label_string := fmt.Sprintf("Generated on: %s", time.Now().String())
 	addLabel(img, 50, 1420, 2, label_string)
 
-	location := lookupIP(ip)
 	addLabel(img, 50, 1400, 2, fmt.Sprintf("Client IP: %s (%s)", ip, location))
 
 	forecast := fetchForecast(location)
@@ -288,7 +256,9 @@ func render_image(ip string) image.Image {
 
 func serve_image(c *gin.Context) {
 	buffer := new(bytes.Buffer)
-	img := render_image(c.ClientIP())
+	location := c.DefaultQuery("location", "37.676878,-122.459695")
+	ip := c.ClientIP()
+	img := render_image(location, ip)
 	if err := png.Encode(buffer, img); err != nil {
 		log.Println("unable to encode image.")
 	}
