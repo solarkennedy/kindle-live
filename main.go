@@ -138,7 +138,8 @@ func weatherBackendSetup() {
 	for _, fe := range iface.AllFrontends {
 		fe.Setup()
 	}
-	flag.Set("forecast-api-key", "foo")
+	api_key := os.Getenv("forecast_api_key")
+	flag.Set("forecast-api-key", api_key)
 	flag.Set("forecast-lang", "en")
 	flag.Set("forecast-debug", "false")
 	flag.Set("frontend", "emoji")
@@ -216,8 +217,12 @@ func drawForecast(img *image.Gray, y int, day iface.Day) {
 		addLabel(img, x, y+20, 1, fmt.Sprintf("Slot %d", slot_hour))
 		addWeatherIcon(img, x, y+45, 3, codeToIcon(slot.Code, hourToBool(slot_hour)))
 
+		var chance int = 0
+		if slot.ChanceOfRainPercent != nil {
+			chance = *slot.ChanceOfRainPercent
+		}
 		addWeatherIcon(img, x, y+60, 1, "\uf04e")
-		addLabel(img, x+10, y+60, 1, fmt.Sprintf("%d%%", *slot.ChanceOfRainPercent))
+		addLabel(img, x+10, y+60, 1, fmt.Sprintf("%d%%", chance))
 
 		addWeatherIcon(img, x, y+70, 1, "\uf055")
 		addLabel(img, x+10, y+70, 1, fmt.Sprintf("%.1f °C", *slot.FeelsLikeC))
@@ -229,7 +234,7 @@ func renderForecast(img *image.Gray, r iface.Data) {
 	addLabel(img, 50, 50, 6, "Current Weather")
 
 	hour := c.Time.Hour()
-	addWeatherIcon(img, 50, 290, 24, codeToIcon(c.Code, hourToBool(hour)))
+	addWeatherIcon(img, 50, 250, 24, codeToIcon(c.Code, hourToBool(hour)))
 	addLabel(img, 100, 320, 4, c.Desc)
 
 	addWeatherIcon(img, 368, 130, 4, "\uf055")
@@ -239,7 +244,11 @@ func renderForecast(img *image.Gray, r iface.Data) {
 	addLabel(img, 400, 170, 4, fmt.Sprintf("Humidity: %d", *r.Current.Humidity))
 
 	addWeatherIcon(img, 370, 210, 4, "\uf04e")
-	addLabel(img, 400, 210, 4, fmt.Sprintf("Rain chance: %d%%", *c.ChanceOfRainPercent))
+	var chance int = 0
+	if c.ChanceOfRainPercent != nil {
+		chance = *c.ChanceOfRainPercent
+	}
+	addLabel(img, 400, 210, 4, fmt.Sprintf("Rain chance: %d%%", chance))
 
 	addWeatherIcon(img, 360, 250, 4, "\uf0b7") // TODO Calculate scale
 	addLabel(img, 400, 250, 4, fmt.Sprintf("Windspeed: %.1f km/h", *c.WindspeedKmph))
