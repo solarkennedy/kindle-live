@@ -55,8 +55,8 @@ const (
 	// see https://developer.forecast.io/docs/v2
 	// see also https://github.com/mlbright/forecast
 	//https://api.forecast.io/forecast/APIKEY/LATITUDE,LONGITUDE
-	forecastWuri = "http://localhost:5001/forecast.io.example.json.%s.%s.%s"
-	//forecastWuri = "https://api.forecast.io/forecast/%s/%s?units=ca&lang=%s&exclude=minutely,alerts,flags&extend=hourly"
+	//forecastWuri = "http://localhost:5001/forecast.io.example.json.%s.%s.%s"
+	forecastWuri = "https://api.forecast.io/forecast/%s/%s?units=ca&lang=%s&exclude=minutely,alerts,flags&extend=hourly"
 )
 
 func (c *forecastConfig) parseAstro(cur *iface.Day, days []forecastDataPoint) {

@@ -128,7 +128,6 @@ func fetchForecast(location string) iface.Data {
 	numdays := 3
 	fmt.Println("Going to fetch the weather....")
 	r := weather.Fetch(location, numdays)
-	//fmt.Println(r)
 	return r
 }
 
