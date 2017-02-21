@@ -160,7 +160,8 @@ func hourToBool(h int) bool {
 }
 
 func drawForecast(img *image.Gray, y int, day iface.Day) {
-	addLabel(img, 50, y, 4, fmt.Sprintf("Forcast for %s", day.Date))
+	date_string := fmt.Sprintf(day.Date.Format("Monday, 2006-01-02 (MST)"))
+	addLabel(img, 50, y, 4, fmt.Sprintf("Forcast for %s", date_string))
 	for i := 0; i < 24; i++ {
 		x := i*40 + 20
 		addLabel(img, x, y+10, 1, fmt.Sprintf("Hour %d", i))
@@ -193,7 +194,7 @@ func speedToBeaufort(kmph float32) (string, string) {
 	} else if kmph < 19 {
 		return "\uf0ba", "Gentle breeze"
 	} else if kmph < 28 {
-		return "\uf0bb", "Modarate breeze" //4
+		return "\uf0bb", "Moderate breeze" //4
 	} else if kmph < 38 {
 		return "\uf0bc", "Fresh breeze"
 	} else if kmph < 49 {
@@ -223,7 +224,7 @@ func directionToIcon(direction int) (string, string) {
 	} else if direction < 157 {
 		return "\uf05d", "Northwesterly"
 	} else if direction < 202 {
-		return "\uf060", "Northernly"
+		return "\uf060", "Northerly"
 	} else if direction < 247 {
 		return "\uf053", "Northeasterly"
 	} else if direction < 292 {
@@ -240,14 +241,14 @@ func renderForecast(img *image.Gray, r iface.Data) {
 	addLabel(img, 50, 50, 6, "Current Weather")
 
 	hour := c.Time.Hour()
-	addWeatherIcon(img, 50, 250, 24, codeToIcon(c.Code, hourToBool(hour)))
+	addWeatherIcon(img, 70, 230, 18, codeToIcon(c.Code, hourToBool(hour)))
 	addLabel(img, 100, 320, 4, c.Desc)
 
 	addWeatherIcon(img, 368, 130, 4, "\uf055")
 	addLabel(img, 400, 130, 4, fmt.Sprintf("Temperature: %.1f °C (Feels like %.1f °C)", *c.TempC, *c.FeelsLikeC))
 
 	addWeatherIcon(img, 365, 170, 4, "\uf07a")
-	addLabel(img, 400, 170, 4, fmt.Sprintf("Humidity: %d", *r.Current.Humidity))
+	addLabel(img, 400, 170, 4, fmt.Sprintf("Humidity: %d%%", *r.Current.Humidity))
 
 	addWeatherIcon(img, 370, 210, 4, "\uf04e")
 	var chance int = 0
@@ -261,7 +262,7 @@ func renderForecast(img *image.Gray, r iface.Data) {
 	addLabel(img, 400, 250, 4, fmt.Sprintf("Windspeed: %.1f km/h (%s)", *c.WindspeedKmph, wind_desc))
 
 	windd_icon, windd_desc := directionToIcon(*c.WinddirDegree)
-	addWeatherIcon(img, 371, 290, 4, windd_icon)
+	addWeatherIcon(img, 370, 290, 4, windd_icon)
 	addLabel(img, 400, 290, 4, fmt.Sprintf("Wind direction: %d° (%s)", *c.WinddirDegree, windd_desc))
 
 	for i, d := range r.Forecast {

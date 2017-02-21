@@ -2,3 +2,4 @@
 .docker_build/
 *.swp
 kindle-live
+.idea/
